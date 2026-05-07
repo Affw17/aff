@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fathir Affifsyah — Portfolio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+  <style>
+    /* ─── RESET & ROOT ─────────────────────────────── */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --cream:   #F7F3EE;
+      --dark:    #1A1714;
+      --stone:   #8C8279;
+      --warm:    #C9A882;
+      --accent:  #6B4F35;
+      --line:    rgba(140,130,121,0.2);
+    }
+
+    /* ─── CUSTOM CURSOR ────────────────────────────── */
+    * { cursor: none !important; }
+
+    #cat-cursor {
+      position: fixed;
+      width: 48px;
+      height: 60px;
+      pointer-events: none;
+      z-index: 99999;
+      /* tip of arrow = mouse: no offset, arrow starts at top-left of SVG */
+      top: 0; left: 0;
+      will-change: transform;
+    }
+
+    #cat-cursor svg {
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.18));
+    }
+
+    #cat-cursor.clicking { opacity: 0.85; }
+
+    /* cat blink */
+    @keyframes blink {
+      0%, 88%, 100% { transform: scaleY(1); }
+      93%           { transform: scaleY(0.08); }
+    }
+    #cat-eye-l { animation: blink 3.5s ease-in-out infinite; transform-origin: center; }
+    #cat-eye-r { animation: blink 3.5s ease-in-out infinite 0.18s; transform-origin: center; }
+
+    /* cheek blush pulse */
+    @keyframes blushPulse {
+      0%,100% { opacity: 0.5; }
+      50%     { opacity: 0.82; }
+    }
+    #blush-l, #blush-r { animation: blushPulse 2.4s ease-in-out infinite; }
+
+    /* ─── BODY ─────────────────────────────────────── */
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--cream);
+      color: var(--dark);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE OVERLAY ────────────────────── */
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9998;
+      opacity: 0.5;
+    }
+
+    /* ─── NAV ──────────────────────────────────────── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 1.8rem 4rem;
+      z-index: 100;
+      background: linear-gradient(to bottom, var(--cream) 60%, transparent);
+    }
+
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.1rem;
+      letter-spacing: 0.12em;
+      color: var(--accent);
+    }
+
+    .nav-links { display: flex; gap: 2.5rem; }
+
+    .nav-links a {
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--stone);
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute; bottom: -3px; left: 0;
+      width: 0; height: 1px;
+      background: var(--warm);
+      transition: width 0.35s ease;
+    }
+    .nav-links a:hover { color: var(--dark); }
+    .nav-links a:hover::after { width: 100%; }
+
+    /* ─── HERO ─────────────────────────────────────── */
+    .hero {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      justify-content: center;
+      padding: 0 4rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-bg-text {
+      position: absolute;
+      right: -1rem; top: 50%;
+      transform: translateY(-50%);
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(6rem, 14vw, 16rem);
+      font-weight: 300;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(140,130,121,0.12);
+      letter-spacing: -0.02em;
+      line-height: 1;
+      user-select: none;
+      pointer-events: none;
+    }
+
+    .hero-eyebrow {
+      font-size: 0.68rem;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 1.6rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.2s forwards;
+    }
+
+    .hero-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(3.2rem, 7vw, 7rem);
+      font-weight: 300;
+      line-height: 1.05;
+      letter-spacing: -0.02em;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.45s forwards;
+    }
+
+    .hero-name em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      margin-top: 1.8rem;
+      font-size: 0.88rem;
+      color: var(--stone);
+      letter-spacing: 0.04em;
+      line-height: 1.8;
+      max-width: 340px;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.7s forwards;
+    }
+
+    .hero-cta {
+      margin-top: 3rem;
+      display: inline-flex; align-items: center; gap: 0.75rem;
+      text-decoration: none;
+      font-size: 0.72rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--dark);
+      border-bottom: 1px solid var(--warm);
+      padding-bottom: 0.3rem;
+      opacity: 0;
+      animation: fadeUp 0.9s ease 0.9s forwards;
+      transition: gap 0.3s, color 0.3s;
+    }
+    .hero-cta:hover { gap: 1.2rem; color: var(--accent); }
+    .hero-cta span { font-size: 1rem; }
+
+    .hero-scroll {
+      position: absolute; bottom: 2.5rem; left: 4rem;
+      display: flex; align-items: center; gap: 0.8rem;
+      font-size: 0.62rem; letter-spacing: 0.22em;
+      text-transform: uppercase; color: var(--stone);
+      opacity: 0; animation: fadeUp 1s ease 1.2s forwards;
+    }
+
+    .scroll-line {
+      width: 40px; height: 1px;
+      background: var(--warm);
+      animation: scrollLine 2s ease-in-out infinite;
+    }
+
+    @keyframes scrollLine {
+      0%, 100% { width: 40px; opacity: 1; }
+      50%       { width: 20px; opacity: 0.4; }
+    }
+
+    /* ─── DIVIDER ──────────────────────────────────── */
+    .divider {
+      width: calc(100% - 8rem);
+      margin: 0 4rem;
+      height: 1px;
+      background: var(--line);
+    }
+
+    /* ─── ABOUT ────────────────────────────────────── */
+    .section {
+      padding: 6rem 4rem;
+    }
+
+    .section-label {
+      font-size: 0.62rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--warm);
+      margin-bottom: 3rem;
+      display: flex; align-items: center; gap: 1rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1; height: 1px;
+      background: var(--line);
+      max-width: 80px;
+    }
+
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: start;
+    }
+
+    .about-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 300;
+      line-height: 1.25;
+      letter-spacing: -0.01em;
+    }
+
+    .about-headline em { font-style: italic; color: var(--accent); }
+
+    .about-body {
+      font-size: 0.88rem;
+      line-height: 1.9;
+      color: var(--stone);
+    }
+
+    .about-body p + p { margin-top: 1rem; }
+
+    /* ─── STATS ────────────────────────────────────── */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+      margin-top: 4rem;
+      border-top: 1px solid var(--line);
+      border-left: 1px solid var(--line);
+    }
+
+    .stat {
+      padding: 2rem 2.5rem;
+      border-right: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stat-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.8rem;
+      font-weight: 300;
+      color: var(--accent);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--stone);
+      margin-top: 0.5rem;
+    }
+
+    /* ─── SKILLS ───────────────────────────────────── */
+    .skills-section { padding: 6rem 4rem; }
+
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--line);
+      border: 1px solid var(--line);
+      margin-top: 3rem;
+    }
+
+    .skill-card {
+      background: var(--cream);
+      padding: 2.5rem 2rem;
+      transition: background 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .skill-card::before {
+      content: '';
+      position: absolute; bottom: 0; left: 0;
+      width: 100%; height: 2px;
+      background: linear-gradient(to right, var(--warm), var(--accent));
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.4s ease;
+    }
+
+    .skill-card:hover { background: #F2EDE6; }
+    .skill-card:hover::before { transform: scaleX(1); }
+
+    .skill-icon {
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: block;
+    }
+
+    .skill-name {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem;
+      font-weight: 400;
+      letter-spacing: 0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    .skill-desc {
+      font-size: 0.75rem;
+      color: var(--stone);
+      line-height: 1.7;
+      letter-spacing: 0.02em;
+    }
+
+    /* ─── HOBBIES ──────────────────────────────────── */
+    .hobby-row {
+      display: flex; gap: 1.5rem;
+      margin-top: 3rem;
+      flex-wrap: wrap;
+    }
+
+    .hobby-pill {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      padding: 0.7rem 1.4rem;
+      border: 1px solid var(--line);
+      font-size: 0.72rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--stone);
+      transition: all 0.3s;
+      position: relative; overflow: hidden;
+    }
+
+    .hobby-pill::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: var(--warm);
+      transform: translateX(-100%);
+      transition: transform 0.35s ease;
+      z-index: 0;
+    }
+
+    .hobby-pill span, .hobby-pill em { position: relative; z-index: 1; }
+
+    .hobby-pill:hover { color: var(--cream); border-color: var(--warm); }
+    .hobby-pill:hover::before { transform: translateX(0); }
+
+    /* ─── CONTACT ──────────────────────────────────── */
+    .contact-section {
+      padding: 6rem 4rem;
+      text-align: center;
+      background: var(--dark);
+      color: var(--cream);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-section::before {
+      content: 'SAY HI';
+      position: absolute;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(5rem, 15vw, 14rem);
+      font-weight: 300;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(247,243,238,0.05);
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .contact-headline {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.5rem, 5vw, 4.5rem);
+      font-weight: 300;
+      line-height: 1.15;
+      position: relative;
+    }
+
+    .contact-headline em { font-style: italic; color: var(--warm); }
+
+    .contact-sub {
+      margin-top: 1.2rem;
+      font-size: 0.82rem;
+      color: rgba(247,243,238,0.5);
+      letter-spacing: 0.06em;
+      position: relative;
+    }
+
+    .contact-email {
+      display: inline-block;
+      margin-top: 2.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.15rem;
+      letter-spacing: 0.08em;
+      color: var(--warm);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(201,168,130,0.4);
+      padding-bottom: 0.3rem;
+      transition: border-color 0.3s;
+      position: relative;
+    }
+    .contact-email:hover { border-color: var(--warm); }
+
+    .contact-socials {
+      display: flex; justify-content: center;
+      gap: 2rem; margin-top: 3rem;
+      position: relative;
+    }
+
+    .social-link {
+      text-decoration: none;
+      font-size: 0.65rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: rgba(247,243,238,0.4);
+      transition: color 0.3s;
+    }
+    .social-link:hover { color: var(--warm); }
+
+    /* ─── FOOTER ───────────────────────────────────── */
+    footer {
+      padding: 1.5rem 4rem;
+      display: flex; justify-content: space-between; align-items: center;
+      border-top: 1px solid var(--line);
+      font-size: 0.65rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--stone);
+    }
+
+    /* ─── ANIMATIONS ───────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ─── RESPONSIVE ───────────────────────────────── */
+    @media (max-width: 768px) {
+      nav { padding: 1.4rem 2rem; }
+      .nav-links { gap: 1.5rem; }
+      .hero { padding: 0 2rem; }
+      .section, .skills-section, .contact-section { padding: 4rem 2rem; }
+      .divider { width: calc(100% - 4rem); margin: 0 2rem; }
+      .about-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .stats { grid-template-columns: 1fr 1fr; }
+      footer { padding: 1.5rem 2rem; flex-direction: column; gap: 0.5rem; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- CAT CURSOR: cat face fused onto arrow tip, click point = top of left ear -->
+  <div id="cat-cursor">
+    <svg viewBox="0 0 48 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!--
+        Layout (viewBox 48×60):
+        • Arrow tip = (0, 0) top-left corner  ← this is the click hotspot
+        • Cat head centered at (24, 22), r=16
+        • Arrow body goes from (0,0) down through the head base
+      -->
+
+      <!-- ── ARROW SHAFT fused under cat chin ── -->
+      <!-- Arrow: tip at (0,0), body pointing down-right, merges into head -->
+      <polygon
+        points="0,0  0,38  10,28  15,42  19,40  14,26  26,26"
+        fill="white" stroke="#1A1714" stroke-width="1.4" stroke-linejoin="round"/>
+
+      <!-- ── CAT EARS (pointy, above head) ── -->
+      <!-- Left ear: tip at (8, 2), base merges into head -->
+      <polygon points="8,2  4,14  16,16"  fill="#FFCBA4"/>
+      <polygon points="8,2  6,13  14,15"  fill="#FFB3C6"/>
+      <!-- Right ear: tip at (34, 4), base merges into head -->
+      <polygon points="34,4  30,14  42,13" fill="#FFCBA4"/>
+      <polygon points="34,4  32,13  40,13" fill="#FFB3C6"/>
+
+      <!-- ── CAT HEAD ── -->
+      <circle cx="24" cy="22" r="16" fill="#FFCBA4"/>
+      <circle cx="24" cy="22" r="16" fill="none" stroke="#E8A87C" stroke-width="0.7"/>
+
+      <!-- Forehead M-stripe -->
+      <path d="M20,9 Q22,12 24,10 Q26,12 28,9" stroke="#E0976A" stroke-width="1"
+            fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+
+      <!-- Cheek blushes -->
+      <ellipse id="blush-l" cx="13" cy="26" rx="4"   ry="2.5" fill="#FFB3C6" opacity="0.5"/>
+      <ellipse id="blush-r" cx="35" cy="26" rx="4"   ry="2.5" fill="#FFB3C6" opacity="0.5"/>
+
+      <!-- ── LEFT EYE ── -->
+      <g id="cat-eye-l">
+        <ellipse cx="18" cy="21" rx="4.2" ry="4.6" fill="#1E110A"/>
+        <circle  cx="19.4" cy="19.2" r="1.3" fill="white"/>
+        <circle  cx="17.4" cy="22"   r="0.6" fill="white" opacity="0.55"/>
+        <ellipse cx="18"   cy="21"   rx="1.8" ry="2.2" fill="#4E9A4E" opacity="0.5"/>
+      </g>
+
+      <!-- ── RIGHT EYE ── -->
+      <g id="cat-eye-r">
+        <ellipse cx="30" cy="21" rx="4.2" ry="4.6" fill="#1E110A"/>
+        <circle  cx="31.4" cy="19.2" r="1.3" fill="white"/>
+        <circle  cx="29.4" cy="22"   r="0.6" fill="white" opacity="0.55"/>
+        <ellipse cx="30"   cy="21"   rx="1.8" ry="2.2" fill="#4E9A4E" opacity="0.5"/>
+      </g>
+
+      <!-- Nose heart -->
+      <path d="M22.5,26.5 Q24,24.8 25.5,26.5 Q24,28.5 22.5,26.5Z" fill="#FF8FAB"/>
+
+      <!-- Mouth w-shape -->
+      <path d="M21.5,27.8 Q20,30.5 18,29.5" stroke="#C07080" stroke-width="0.95"
+            fill="none" stroke-linecap="round"/>
+      <path d="M26.5,27.8 Q28,30.5 30,29.5" stroke="#C07080" stroke-width="0.95"
+            fill="none" stroke-linecap="round"/>
+
+      <!-- Whiskers left -->
+      <line x1="2"  y1="24.5" x2="16" y2="25.5" stroke="#C09090" stroke-width="0.85" opacity="0.65"/>
+      <line x1="2"  y1="27.5" x2="16" y2="27.5" stroke="#C09090" stroke-width="0.85" opacity="0.65"/>
+      <!-- Whiskers right -->
+      <line x1="32" y1="25.5" x2="46" y2="24.5" stroke="#C09090" stroke-width="0.85" opacity="0.65"/>
+      <line x1="32" y1="27.5" x2="46" y2="27.5" stroke="#C09090" stroke-width="0.85" opacity="0.65"/>
+    </svg>
+  </div>
+
+  <!-- NAV -->
+  <nav>
+    <div class="nav-logo">F.A</div>
+    <div class="nav-links">
+      <a href="#about">Tentang</a>
+      <a href="#skills">Keahlian</a>
+      <a href="#contact">Kontak</a>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-bg-text">STI</div>
+    <p class="hero-eyebrow">Portofolio — 2025</p>
+    <h1 class="hero-name">Fathir<br><em>Affifsyah</em></h1>
+    <p class="hero-sub">
+      Mahasiswa Sistem & Teknologi Informasi<br>
+      yang memiliki jiwa kreatif dalam dunia digital editing.
+    </p>
+    <a href="#about" class="hero-cta">Kenali Saya <span>→</span></a>
+    <div class="hero-scroll">
+      <div class="scroll-line"></div>
+      Scroll
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="section-label">Tentang Saya</div>
+    <div class="about-grid">
+      <div class="about-headline reveal">
+        Kreatif,<br><em>terstruktur,</em><br>& selalu belajar.
+      </div>
+      <div class="about-body reveal">
+        <p>Halo! Saya <strong>Fathir Affifsyah</strong>, mahasiswa jurusan <em>Sistem dan Teknologi Informasi</em> yang memiliki ketertarikan kuat terhadap dunia teknologi dan kreativitas digital.</p>
+        <p>Saya percaya bahwa teknologi dan seni visual bisa berjalan berdampingan. Dengan kombinasi logika dari dunia IT dan rasa estetika dari hobi editing, saya berusaha menghadirkan karya yang tidak hanya fungsional, tetapi juga indah.</p>
+        <p>Saat ini saya sedang terus mengasah kemampuan dan mencari pengalaman baru yang bermakna.</p>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat reveal">
+        <div class="stat-num">STI</div>
+        <div class="stat-label">Jurusan</div>
+      </div>
+      <div class="stat reveal">
+        <div class="stat-num">∞</div>
+        <div class="stat-label">Semangat Belajar</div>
+      </div>
+      <div class="stat reveal">
+        <div class="stat-num">01</div>
+        <div class="stat-label">Visi Karir</div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- SKILLS -->
+  <section class="skills-section" id="skills">
+    <div class="section-label">Keahlian</div>
+    <div class="skills-grid">
+      <div class="skill-card reveal">
+        <span class="skill-icon">🎬</span>
+        <div class="skill-name">Video Editing</div>
+        <div class="skill-desc">Kemampuan mengedit video dengan storytelling yang kuat dan estetika visual yang menarik.</div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🖼️</span>
+        <div class="skill-name">Photo Editing</div>
+        <div class="skill-desc">Retouch, color grading, dan komposisi foto untuk hasil yang profesional dan berkesan.</div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">💻</span>
+        <div class="skill-name">Teknologi Informasi</div>
+        <div class="skill-desc">Pemahaman mendalam tentang sistem informasi, jaringan, dan infrastruktur digital.</div>
+      </div>
+      <div class="skill-card reveal">
+        <span class="skill-icon">🎨</span>
+        <div class="skill-name">Desain Kreatif</div>
+        <div class="skill-desc">Kepekaan estetika tinggi untuk menciptakan konten visual yang impactful.</div>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:3.5rem; margin-bottom:0;">Hobi</div>
+    <div class="hobby-row">
+      <div class="hobby-pill"><em>✂️</em> <span>Video Editing</span></div>
+      <div class="hobby-pill"><em>📸</em> <span>Fotografi</span></div>
+      <div class="hobby-pill"><em>🎵</em> <span>Musik</span></div>
+      <div class="hobby-pill"><em>💡</em> <span>Eksplorasi Teknologi</span></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="contact-section" id="contact">
+    <h2 class="contact-headline">
+      Mari <em>Berkolaborasi</em><br>Bersama
+    </h2>
+    <p class="contact-sub">Terbuka untuk proyek, diskusi, & kesempatan baru.</p>
+    <a href="https://mail.fathir@gmail.com" class="contact-email">fathir@gmail.com</a>
+    <div class="contact-socials">
+      <a href="https://www.instagram.com/thirr33/" class="social-link">Instagram</a>
+      <a href="https://www.linkedin.com/in/fathir-affifsyah-668946408/" class="social-link">LinkedIn</a>
+      <a href="https://github.com/affw17" class="social-link">GitHub</a>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <span>© 2026 Fathir Affifsyah</span>
+    <span>Sistem & Teknologi Informasi</span>
+  </footer>
+
+  <script>
+    // ── CAT CURSOR ──────────────────────────────────
+    const cat = document.getElementById('cat-cursor');
+
+    document.addEventListener('mousemove', e => {
+      // Arrow tip is at SVG top-left (0,0), so place element exactly at mouse
+      cat.style.transform = `translate(${e.clientX}px, ${e.clientY}px)`;
+    });
+
+    document.addEventListener('mousedown', () => cat.classList.add('clicking'));
+    document.addEventListener('mouseup',   () => cat.classList.remove('clicking'));
+
+    // ── SCROLL REVEAL ───────────────────────────────
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('visible');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+</body>
+</html>
